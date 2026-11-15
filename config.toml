@@ -1,6 +1,11 @@
 # Vogelwacht – Einstellungen
 # Relative Pfade beziehen sich auf den Ordner dieser Datei.
 
+[ui]
+# Sprache von Webseite und Vogelnamen: "de" = Deutsch, "en" = English
+# (auf der Webseite zusaetzlich oben rechts umschaltbar)
+language = "de"
+
 [camera]
 device = "/dev/video0"          # Kamera (v4l2-ctl --list-devices)
 width = 640

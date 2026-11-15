@@ -26,7 +26,7 @@ import cv2
 import numpy as np
 
 from classifier import SpeciesClassifier
-from species_de import GERMAN_NAMES
+from species_de import GERMAN_NAMES, NAMES
 from visits import UNKNOWN, VisitTracker
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -189,6 +189,12 @@ def notify(cfg, visit, name, image_rel):
         log('Webhook fehlgeschlagen:', e)
 
 
+def language(cfg):
+    """'de' oder 'en' aus [ui] language."""
+    lang = cfg.get('ui', {}).get('language', 'de')
+    return lang if lang in NAMES else 'de'
+
+
 def make_classifier(cfg):
     c = cfg['classifier']
     allowed = list(GERMAN_NAMES) if c.get('restrict_to_garden_birds', True) else None
@@ -208,6 +214,7 @@ def test_image(cfg, path):
         sys.exit('Bild nicht lesbar: ' + path)
     clf = make_classifier(cfg)
     det = make_detector(cfg)
+    names = NAMES[language(cfg)]
     try:
         birds = det.detect(frame)
         log('Voegel gefunden:', len(birds), '({} ms NPU)'.format(det.infer_ms))
@@ -220,12 +227,12 @@ def test_image(cfg, path):
             top = clf.classify(crop)
             ms = (time.perf_counter() - t0) * 1000
             log('Vogel {:.0%} bei {}: '.format(score, box) + ', '.join(
-                '{} {:.0%}'.format(clf.display_name(n, GERMAN_NAMES), p) for n, p in top[:3]),
+                '{} {:.0%}'.format(clf.display_name(n, names), p) for n, p in top[:3]),
                 '({:.0f} ms CPU)'.format(ms))
             x, y, w, h = box
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 200, 0), 2)
             if top:
-                cv2.putText(frame, clf.display_name(top[0][0], GERMAN_NAMES), (x, max(15, y - 5)),
+                cv2.putText(frame, clf.display_name(top[0][0], names), (x, max(15, y - 5)),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 200, 0), 2)
         out = os.path.splitext(path)[0] + '_ergebnis.jpg'
         cv2.imwrite(out, frame)
@@ -238,10 +245,12 @@ def run(cfg):
     from storage import Storage
     from web import SharedState, start_web
 
+    lang = language(cfg)
+    names = NAMES[lang]
     storage = Storage(cfg['storage']['data_dir'])
     state = SharedState()
     if cfg['web'].get('enabled', True):
-        start_web(storage, state, cfg['web']['host'], cfg['web']['port'])
+        start_web(storage, state, cfg['web']['host'], cfg['web']['port'], lang)
         log('Webseite auf Port', cfg['web']['port'])
 
     clf = make_classifier(cfg)
@@ -268,7 +277,10 @@ def run(cfg):
     last_cleanup = 0.0
 
     def finish(visit):
-        name = UNKNOWN if visit.species == UNKNOWN else clf.display_name(visit.species, GERMAN_NAMES)
+        if visit.species == UNKNOWN:
+            name = UNKNOWN if lang == 'de' else 'unknown'
+        else:
+            name = clf.display_name(visit.species, names)
         data = jpeg(visit.best_image) if visit.best_image is not None else None
         rel = storage.add_visit(visit, name, data)
         log('Besuch: {} ({:.0%}, {} Bilder, {:.0f} s)'.format(
@@ -285,7 +297,7 @@ def run(cfg):
 
             hour = datetime.now().hour
             if not (sched['active_from'] <= hour < sched['active_until']):
-                state.status = 'Nachtpause'
+                state.set_status('night')
                 visit = tracker.flush()
                 if visit:
                     finish(visit)
@@ -307,14 +319,14 @@ def run(cfg):
                 last_motion = now
             watching = motion is None or tracker.active or now - last_motion < mcfg['active_s']
             if not watching:
-                state.status = 'wartet auf Bewegung'
+                state.set_status('waiting')
                 visit = tracker.tick(now)
                 if visit:
                     finish(visit)
                 stop.wait(1 / mcfg['idle_fps'])
                 continue
 
-            state.status = 'beobachtet'
+            state.set_status('watching')
             birds = det.detect(frame)
             if birds and now - last_clf >= clf_interval:
                 score, box = max(birds, key=lambda b: b[0])
@@ -324,7 +336,7 @@ def run(cfg):
                     last_clf = now
                     if top:
                         tracker.observe(now, top, score, frame)
-                        state.status = 'Vogel: ' + clf.display_name(top[0][0], GERMAN_NAMES)
+                        state.set_status('bird', top[0][0])
                     else:  # keine erlaubte Art passt, Besuch trotzdem offen halten
                         tracker.keep_alive(now)
             elif birds:

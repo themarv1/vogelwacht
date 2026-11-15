@@ -57,7 +57,8 @@ class Storage:
     def counts_since(self, since_ts):
         with self._lock:
             rows = self._db.execute(
-                'SELECT name, COUNT(*) AS n FROM visits WHERE start >= ? GROUP BY name ORDER BY n DESC',
+                'SELECT species, MAX(name) AS name, COUNT(*) AS n FROM visits WHERE start >= ? '
+                'GROUP BY species ORDER BY n DESC',
                 (since_ts,)).fetchall()
         return [dict(r) for r in rows]
 

@@ -15,17 +15,17 @@ the board, the parametric Fusion 360 script and the parts list are on Printables
 > **Status:** First version, **not yet tested on the board** (the board hasn't
 > arrived yet). Species identification with the real model, the visit logic,
 > the database and the web page are tested on a PC – see "What's tested".
->
-> The web page and the bird names are in German for now.
 
 ## The web page
 
 Daily statistics per species, visits by time of day, recent visitors with a photo
-and the live image. The page follows the device's light or dark mode.
+and the live image. The page follows the device's light or dark mode and comes in
+**English or German**: set `language` in `config.toml`, or switch with the DE / EN
+link at the top right of the page.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/webseite_dunkel.jpg">
-  <img src="docs/webseite_hell.jpg" alt="Vogelwacht web page with daily statistics, recent visitors and live image" width="600">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/webseite_en_dunkel.jpg">
+  <img src="docs/webseite_en_hell.jpg" alt="Vogelwacht web page with daily statistics, recent visitors and live image" width="600">
 </picture>
 
 <sub>Screenshot from the PC test with demo data, not from the board. Bird photos from
@@ -57,7 +57,7 @@ Camera (OV5647, CSI)
 | `visits.py` | Groups detections into visits (pure logic, with tests) |
 | `storage.py` | SQLite database and photos |
 | `web.py` | Web page: daily statistics, recent visitors, live image |
-| `species_de.py` | German bird names = list of allowed species |
+| `species_de.py` | German and English bird names = list of allowed species |
 | `config.toml` | All settings |
 | `setup_models.sh` | Downloads the bird species model from Google Coral |
 | `vogelwacht.service` | Autostart via systemd |
@@ -140,18 +140,19 @@ The most important ones:
 
 | Setting | Meaning |
 |---------|---------|
+| `ui.language` | `"en"` or `"de"`: language of the web page and the bird names |
 | `camera.rotate` | Rotate the image if the camera is mounted differently |
 | `camera.retune_exposure_min` | Re-adjust exposure to the daylight at this interval |
 | `detector.min_score` | Score from which something counts as a bird |
 | `classifier.restrict_to_garden_birds` | Only allow species from `species_de.py` (recommended) |
 | `visits.gap_s` | Pause after which a new visit starts |
-| `visits.min_confidence` | Below this, the visit is stored as "unbekannt" (unknown) |
+| `visits.min_confidence` | Below this, the visit is stored as "unknown" |
 | `motion.*` | Motion detection, so the AI doesn't run all the time |
 | `schedule.active_from/until` | Night pause |
 | `notify.webhook_url` | Report visits to Home Assistant, ntfy or similar |
 
-To allow more species, add an entry to `species_de.py` (Latin name as in
-`models/inat_bird_labels.txt`).
+To allow more species, add an entry to `GERMAN_NAMES` and `ENGLISH_NAMES` in
+`species_de.py` (Latin name as in `models/inat_bird_labels.txt`).
 
 ## What's tested
 

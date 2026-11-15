@@ -18,7 +18,9 @@ Printables: **[Vogelwacht – AI Bird Feeder Case for the Coral Board SL](https:
 ## Die Webseite
 
 Tagesstatistik je Art, Besuche nach Uhrzeit, die letzten Besucher mit Foto und
-das Livebild. Die Seite passt sich dem hellen bzw. dunklen Modus des Geräts an.
+das Livebild. Die Seite passt sich dem hellen bzw. dunklen Modus des Geräts an und
+gibt es auf **Deutsch oder Englisch**: `language` in `config.toml` setzen oder oben
+rechts auf der Seite per DE / EN umschalten.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/webseite_dunkel.jpg">
@@ -54,7 +56,7 @@ Kamera (OV5647, CSI)
 | `visits.py` | Besuche zusammenfassen (reine Logik, mit Tests) |
 | `storage.py` | SQLite-Datenbank und Fotos |
 | `web.py` | Webseite: Tagesstatistik, letzte Besucher, Livebild |
-| `species_de.py` | Deutsche Vogelnamen = Liste der erlaubten Arten |
+| `species_de.py` | Deutsche und englische Vogelnamen = Liste der erlaubten Arten |
 | `config.toml` | Alle Einstellungen |
 | `setup_models.sh` | Lädt das Vogelarten-Modell von Google Coral |
 | `vogelwacht.service` | Autostart per systemd |
@@ -138,6 +140,7 @@ Die wichtigsten:
 
 | Einstellung | Bedeutung |
 |-------------|-----------|
+| `ui.language` | `"de"` oder `"en"`: Sprache der Webseite und der Vogelnamen |
 | `camera.rotate` | Bild drehen, falls die Kamera anders eingebaut ist |
 | `camera.retune_exposure_min` | Belichtung regelmäßig an das Tageslicht anpassen |
 | `detector.min_score` | ab wann etwas als Vogel gilt |
@@ -148,8 +151,8 @@ Die wichtigsten:
 | `schedule.active_from/until` | Nachtpause |
 | `notify.webhook_url` | Besuch an Home Assistant, ntfy o. ä. melden |
 
-Weitere Arten zulassen: Eintrag in `species_de.py` ergänzen (lateinischer Name
-wie in `models/inat_bird_labels.txt`).
+Weitere Arten zulassen: Eintrag in `GERMAN_NAMES` und `ENGLISH_NAMES` in
+`species_de.py` ergänzen (lateinischer Name wie in `models/inat_bird_labels.txt`).
 
 ## Was getestet ist
 
