@@ -1,3 +1,5 @@
+<img src="docs/titelbild.jpg" alt="Vogelwacht – KI-Vogelhaus für das Coral Board SL" width="100%">
+
 # Vogelwacht – Software für das Vogelhaus (Version 0.1)
 
 🇬🇧 [English version](README.md)

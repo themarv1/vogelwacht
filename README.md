@@ -1,3 +1,5 @@
+<img src="docs/titelbild.jpg" alt="Vogelwacht – AI bird feeder for the Coral Board SL" width="100%">
+
 # Vogelwacht – Software for the AI Bird Feeder (version 0.1)
 
 🇩🇪 [Deutsche Version](README.de.md)
