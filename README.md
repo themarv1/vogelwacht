@@ -10,7 +10,7 @@ local web page. No cloud. Documentation below is in German.*
 
 **Gehäuse und Futterhaus:** Das 3D-druckbare Vogelhaus mit Technikfach für das
 Board, das parametrische Fusion-360-Skript und die Teileliste gibt es auf
-Printables: **[Vogelwacht – AI Bird Feeder Case for the Coral Board SL](PRINTABLES_LINK)**
+Printables: **[Vogelwacht – AI Bird Feeder Case for the Coral Board SL](https://www.printables.com/model/1915701-vogelwacht-ai-bird-feeder-case-for-the-coral-board)**
 
 > **Stand:** Erste Version, **noch nicht auf dem Board getestet** (Board ist
 > noch nicht da). Getestet sind die Artbestimmung mit dem echten Modell,
