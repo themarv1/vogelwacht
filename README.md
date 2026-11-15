@@ -1,77 +1,77 @@
-# Vogelwacht – Software für das Vogelhaus (Version 0.1)
+# Vogelwacht – Software for the AI Bird Feeder (version 0.1)
 
-Erkennt Vögel am Rand der Futterschale, bestimmt die Art und zeigt die Besuche auf
-einer kleinen Webseite – komplett auf dem Coralboard SL, ohne Cloud.
+🇩🇪 [Deutsche Version](README.de.md)
 
-*English: On-device bird species recognition for the Synaptics Coral Board SL.
-A camera watches the feeding tray of a 3D-printed bird feeder, the board detects birds
-on its NPU, identifies the species and logs each visit with a photo on a small
-local web page. No cloud. Documentation below is in German.*
+Detects birds on the rim of the feeding tray, identifies the species and shows
+every visit on a small web page – running entirely on the Synaptics Coral Board SL,
+no cloud.
 
-**Gehäuse und Futterhaus:** Das 3D-druckbare Vogelhaus mit Technikfach für das
-Board, das parametrische Fusion-360-Skript und die Teileliste gibt es auf
-Printables: **[Vogelwacht – AI Bird Feeder Case for the Coral Board SL](https://www.printables.com/model/1915701-vogelwacht-ai-bird-feeder-case-for-the-coral-board)**
+**Case and bird feeder:** The 3D-printable feeder with a sealed electronics bay for
+the board, the parametric Fusion 360 script and the parts list are on Printables:
+**[Vogelwacht – AI Bird Feeder Case for the Coral Board SL](https://www.printables.com/model/1915701-vogelwacht-ai-bird-feeder-case-for-the-coral-board)**
 
-> **Stand:** Erste Version, **noch nicht auf dem Board getestet** (Board ist
-> noch nicht da). Getestet sind die Artbestimmung mit dem echten Modell,
-> Besuchslogik, Datenbank und Webseite am PC – siehe „Was getestet ist“.
+> **Status:** First version, **not yet tested on the board** (the board hasn't
+> arrived yet). Species identification with the real model, the visit logic,
+> the database and the web page are tested on a PC – see "What's tested".
+>
+> The web page and the bird names are in German for now.
 
-## Die Webseite
+## The web page
 
-Tagesstatistik je Art, Besuche nach Uhrzeit, die letzten Besucher mit Foto und
-das Livebild. Die Seite passt sich dem hellen bzw. dunklen Modus des Geräts an.
+Daily statistics per species, visits by time of day, recent visitors with a photo
+and the live image. The page follows the device's light or dark mode.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/webseite_dunkel.jpg">
-  <img src="docs/webseite_hell.jpg" alt="Vogelwacht-Webseite mit Tagesstatistik, letzten Besuchern und Livebild" width="600">
+  <img src="docs/webseite_hell.jpg" alt="Vogelwacht web page with daily statistics, recent visitors and live image" width="600">
 </picture>
 
-<sub>Screenshot vom Test am PC mit Beispieldaten, nicht vom Board. Vogelfotos von
-Wikimedia Commons: Kohlmeise – [Luc Viatour](https://commons.wikimedia.org/wiki/File:Parus_major_Luc_Viatour.jpg) (CC BY-SA 2.0),
-Blaumeise – [Francis Franklin](https://commons.wikimedia.org/wiki/File:Eurasian_blue_tit_Lancashire.jpg) (CC BY-SA 3.0),
-Rotkehlchen – [Jacob Spinks](https://commons.wikimedia.org/wiki/File:Robin_(9509442456).jpg) (CC BY 2.0),
-Amsel – [Andreas Trepte](https://commons.wikimedia.org/wiki/File:Common_Blackbird.jpg) (CC BY-SA 2.5),
-Haussperling – [Rhododendrites](https://commons.wikimedia.org/wiki/File:House_sparrow_male_in_Prospect_Park_(53532).jpg) (CC BY-SA 4.0),
-Buchfink – [MichaelMaggs](https://commons.wikimedia.org/wiki/File:Fringilla_coelebs_(chaffinch),_male.jpg) (CC BY-SA 2.5).
-Die Screenshots fallen deshalb nicht unter die MIT-Lizenz des Codes.</sub>
+<sub>Screenshot from the PC test with demo data, not from the board. Bird photos from
+Wikimedia Commons: great tit – [Luc Viatour](https://commons.wikimedia.org/wiki/File:Parus_major_Luc_Viatour.jpg) (CC BY-SA 2.0),
+blue tit – [Francis Franklin](https://commons.wikimedia.org/wiki/File:Eurasian_blue_tit_Lancashire.jpg) (CC BY-SA 3.0),
+robin – [Jacob Spinks](https://commons.wikimedia.org/wiki/File:Robin_(9509442456).jpg) (CC BY 2.0),
+blackbird – [Andreas Trepte](https://commons.wikimedia.org/wiki/File:Common_Blackbird.jpg) (CC BY-SA 2.5),
+house sparrow – [Rhododendrites](https://commons.wikimedia.org/wiki/File:House_sparrow_male_in_Prospect_Park_(53532).jpg) (CC BY-SA 4.0),
+chaffinch – [MichaelMaggs](https://commons.wikimedia.org/wiki/File:Fringilla_coelebs_(chaffinch),_male.jpg) (CC BY-SA 2.5).
+The screenshots are therefore not covered by the MIT license of the code.</sub>
 
-## Ablauf
+## How it works
 
 ```
-Kamera (OV5647, CSI)
-  └─ Bewegungserkennung (Bildvergleich, kaum Rechenlast)
-       └─ Vogelerkennung: YOLOv8n auf der Torq-NPU (COCO-Klasse „bird“)
-            └─ Artbestimmung: MobileNetV2 iNaturalist-Vögel (964 Arten) auf der CPU,
-               beschränkt auf ~35 Gartenvögel in Deutschland
-                 └─ Besuch: über mehrere Bilder gemittelt, endet nach 30 s ohne Vogel
-                      └─ SQLite + bestes Foto (microSD) → Webseite, optional Webhook
+Camera (OV5647, CSI)
+  └─ Motion detection (frame difference, almost no load)
+       └─ Bird detection: YOLOv8n on the Torq NPU (COCO class "bird")
+            └─ Species ID: MobileNetV2 iNaturalist birds (964 species) on the CPU,
+               limited to 39 common garden birds in Germany
+                 └─ Visit: averaged over several frames, ends after 30 s without a bird
+                      └─ SQLite + best photo (microSD) → web page, optional webhook
 ```
 
-| Datei | Inhalt |
-|-------|--------|
-| `vogelwacht.py` | Hauptprogramm (Kamera, Ablauf, Testmodus) |
-| `detector.py` | Vogelerkennung auf der NPU, nutzt Code aus den Synaptics-Beispielen |
-| `classifier.py` | Artbestimmung mit LiteRT |
-| `visits.py` | Besuche zusammenfassen (reine Logik, mit Tests) |
-| `storage.py` | SQLite-Datenbank und Fotos |
-| `web.py` | Webseite: Tagesstatistik, letzte Besucher, Livebild |
-| `species_de.py` | Deutsche Vogelnamen = Liste der erlaubten Arten |
-| `config.toml` | Alle Einstellungen |
-| `setup_models.sh` | Lädt das Vogelarten-Modell von Google Coral |
-| `vogelwacht.service` | Autostart per systemd |
+| File | Purpose |
+|------|---------|
+| `vogelwacht.py` | Main program (camera, pipeline, test mode) |
+| `detector.py` | Bird detection on the NPU, uses code from the Synaptics examples |
+| `classifier.py` | Species identification with LiteRT |
+| `visits.py` | Groups detections into visits (pure logic, with tests) |
+| `storage.py` | SQLite database and photos |
+| `web.py` | Web page: daily statistics, recent visitors, live image |
+| `species_de.py` | German bird names = list of allowed species |
+| `config.toml` | All settings |
+| `setup_models.sh` | Downloads the bird species model from Google Coral |
+| `vogelwacht.service` | Autostart via systemd |
 
-## Einrichtung auf dem Board
+## Setup on the board
 
 ### 1. System
 
-- SD-Karte mit dem **OOBE-Image** für `sl2619_coralboard` flashen (Astra SDK
-  **v2.6.1** oder neuer), z. B. mit Balena Etcher:
+- Flash the **OOBE image** for `sl2619_coralboard` (Astra SDK **v2.6.1** or newer)
+  to the SD card, e.g. with Balena Etcher:
   <https://github.com/synaptics-astra/sdk/releases>
-- WLAN einrichten (AP12611_M2 eingesteckt, Antenne angeschlossen):
+- Set up Wi-Fi (AP12611_M2 plugged in, antenna connected):
   <https://synaptics-astra.github.io/doc/v/latest/linux/index.html#setting-up-wifi-with-wpa-supplicant>
-- Zugang per `adb shell` (USB-C) oder `ssh root@<board-ip>`.
+- Access via `adb shell` (USB-C) or `ssh root@<board-ip>`.
 
-### 2. Synaptics-Beispiele (liefern NPU-Laufzeit, YOLO-Modell und Kamera-Code)
+### 2. Synaptics examples (provide the NPU runtime, the YOLO model and the camera code)
 
 ```sh
 cd /home/root
@@ -82,22 +82,21 @@ python3 -m venv .venv --system-site-packages
 pip install -r requirements.txt
 cd object_detection
 pip install -r requirements.txt
-python setup_demo.py          # lädt YOLOv8n für die NPU
+python setup_demo.py          # downloads YOLOv8n for the NPU
 ```
 
-**Kamera prüfen** (wichtig – hier zeigt sich, ob die Freenove-Kamera erkannt wird):
+**Check the camera** (important – this shows whether the camera module is detected):
 
 ```sh
 v4l2-ctl --list-devices
 python3 run_cli.py --camera-device /dev/video0 --camera-control-device /dev/v4l-subdev2 --json-results test.json
 ```
 
-Hält man einen Vogel (oder ein Vogelfoto) vor die Kamera, sollte `bird`
-erscheinen.
+Hold a bird (or a bird photo) in front of the camera and `bird` should appear.
 
 ### 3. Vogelwacht
 
-Auf dem Board (im venv von Schritt 2):
+On the board (in the venv from step 2):
 
 ```sh
 cd /home/root
@@ -105,24 +104,24 @@ git clone https://github.com/themarv1/vogelwacht
 cd vogelwacht
 . /home/root/sl2610-examples/.venv/bin/activate
 pip install -r requirements.txt
-sh setup_models.sh             # lädt das Vogelarten-Modell nach models/
-python3 tests/test_visits.py   # Besuchslogik prüfen
+sh setup_models.sh             # downloads the species model to models/
+python3 tests/test_visits.py   # check the visit logic
 ```
 
-**Test mit einem Foto** (zeigt Erkennung, Art und Rechenzeit, speichert
-`<foto>_ergebnis.jpg` mit Rahmen):
+**Test with a photo** (shows detection, species and timing, and saves
+`<photo>_ergebnis.jpg` with boxes):
 
 ```sh
-python3 vogelwacht.py --test-image /pfad/zu/vogel.jpg
+python3 vogelwacht.py --test-image /path/to/bird.jpg
 ```
 
-**Dauerbetrieb:**
+**Continuous operation:**
 
 ```sh
 python3 vogelwacht.py
 ```
 
-Webseite: `http://<board-ip>:8080`
+Web page: `http://<board-ip>:8080`
 
 ### 4. Autostart
 
@@ -130,66 +129,64 @@ Webseite: `http://<board-ip>:8080`
 cp vogelwacht.service /etc/systemd/system/
 systemctl daemon-reload
 systemctl enable --now vogelwacht
-journalctl -u vogelwacht -f     # Ausgaben ansehen
+journalctl -u vogelwacht -f     # follow the log
 ```
 
-## Einstellungen (`config.toml`)
+## Settings (`config.toml`)
 
-Die wichtigsten:
+The most important ones:
 
-| Einstellung | Bedeutung |
-|-------------|-----------|
-| `camera.rotate` | Bild drehen, falls die Kamera anders eingebaut ist |
-| `camera.retune_exposure_min` | Belichtung regelmäßig an das Tageslicht anpassen |
-| `detector.min_score` | ab wann etwas als Vogel gilt |
-| `classifier.restrict_to_garden_birds` | nur Arten aus `species_de.py` zulassen (empfohlen) |
-| `visits.gap_s` | Pause, nach der ein neuer Besuch beginnt |
-| `visits.min_confidence` | darunter wird „unbekannt“ gespeichert |
-| `motion.*` | Bewegungserkennung, damit die KI nicht dauernd läuft |
-| `schedule.active_from/until` | Nachtpause |
-| `notify.webhook_url` | Besuch an Home Assistant, ntfy o. ä. melden |
+| Setting | Meaning |
+|---------|---------|
+| `camera.rotate` | Rotate the image if the camera is mounted differently |
+| `camera.retune_exposure_min` | Re-adjust exposure to the daylight at this interval |
+| `detector.min_score` | Score from which something counts as a bird |
+| `classifier.restrict_to_garden_birds` | Only allow species from `species_de.py` (recommended) |
+| `visits.gap_s` | Pause after which a new visit starts |
+| `visits.min_confidence` | Below this, the visit is stored as "unbekannt" (unknown) |
+| `motion.*` | Motion detection, so the AI doesn't run all the time |
+| `schedule.active_from/until` | Night pause |
+| `notify.webhook_url` | Report visits to Home Assistant, ntfy or similar |
 
-Weitere Arten zulassen: Eintrag in `species_de.py` ergänzen (lateinischer Name
-wie in `models/inat_bird_labels.txt`).
+To allow more species, add an entry to `species_de.py` (Latin name as in
+`models/inat_bird_labels.txt`).
 
-## Was getestet ist
+## What's tested
 
-| Teil | Status |
+| Part | Status |
 |------|--------|
-| Artbestimmung mit dem echten Modell (PC, LiteRT) | ✅ Kohlmeise 98 %, Blaumeise 97 %, Rotkehlchen 100 %, Amsel 100 %, Haussperling 100 % (Wikipedia-Fotos, Seitenansicht) |
-| Besuchslogik | ✅ 5 Unit-Tests |
-| Datenbank, Fotos, Webseite, Bewegungserkennung | ✅ Testlauf am PC |
-| Vogelerkennung auf der NPU | ⚠️ ungetestet – nutzt den Code aus den Synaptics-Beispielen unverändert |
-| Kamera (Freenove), Belichtung | ⚠️ ungetestet – hängt vom Kameramodul ab |
-| Dauerbetrieb, Wärme, WLAN | ⚠️ ungetestet |
+| Species ID with the real model (PC, LiteRT) | ✅ great tit 98 %, blue tit 97 %, robin 100 %, blackbird 100 %, house sparrow 100 % (Wikipedia photos, side view) |
+| Visit logic | ✅ 5 unit tests |
+| Database, photos, web page, motion detection | ✅ test run on a PC |
+| Bird detection on the NPU | ⚠️ untested – uses the code from the Synaptics examples unchanged |
+| Camera, exposure | ⚠️ untested – depends on the camera module |
+| Continuous operation, heat, Wi-Fi | ⚠️ untested |
 
-## Bekannte offene Punkte
+## Known open points
 
-- **Blick von oben:** Beide Modelle wurden überwiegend mit Seitenansichten
-  trainiert. Senkrecht von oben ist die Trefferquote vermutlich schlechter.
-  Abhilfe: Kamera leicht schräg stellen, Schwellen in `config.toml` anpassen,
-  später mit eigenen Fotos nachtrainieren.
-- **Artmodell auf der NPU:** Läuft vorerst auf der CPU (geschätzt 0,1–0,3 s
-  pro Ausschnitt auf dem Board). Für die NPU müsste es mit dem Torq-Compiler
-  übersetzt werden (Linux-PC); das Modell ist uint8-quantisiert, die
-  Torq-Doku nennt int8 – ob das direkt geht, ist offen.
-- **Kamera-Klasse:** Die Kamera wird über `app_utils.camera` aus den
-  Synaptics-Beispielen geöffnet (inkl. Belichtungsautomatik). Falls das mit
-  dem Freenove-Modul Probleme macht: `camera.control_device`/`controls`
-  setzen oder `app_utils` testweise umbenennen, dann wird die Kamera direkt
-  per OpenCV geöffnet.
+- **View from above:** Both models were trained mostly on side views. Straight
+  from above, accuracy is probably lower. Workarounds: tilt the camera slightly,
+  adjust the thresholds in `config.toml`, and later fine-tune with your own photos.
+- **Species model on the NPU:** It runs on the CPU for now (estimated 0.1–0.3 s
+  per crop on the board). For the NPU it would have to be compiled with the Torq
+  compiler (Linux PC). The model is uint8-quantized while the Torq docs mention
+  int8 – whether it works directly is still open.
+- **Camera class:** The camera is opened through `app_utils.camera` from the
+  Synaptics examples (including auto exposure). If that causes problems with your
+  camera module, set `camera.control_device`/`controls`, or temporarily rename
+  `app_utils` – the camera is then opened directly with OpenCV.
 
-## Quellen
+## Sources
 
-- Synaptics-Beispiele: <https://github.com/synaptics-astra-demos/sl2610-examples>
-- YOLOv8n für die Torq-NPU: <https://huggingface.co/Synaptics>
-- Vogelarten-Modell (Google Coral, iNaturalist): <https://github.com/google-coral/test_data>
-- Torq-Compiler: <https://synaptics-torq.github.io/torq-compiler/v/latest/>
+- Synaptics examples: <https://github.com/synaptics-astra-demos/sl2610-examples>
+- YOLOv8n for the Torq NPU: <https://huggingface.co/Synaptics>
+- Bird species model (Google Coral, iNaturalist): <https://github.com/google-coral/test_data>
+- Torq compiler: <https://synaptics-torq.github.io/torq-compiler/v/latest/>
 
-## Lizenz
+## License
 
-Der Code steht unter der [MIT-Lizenz](LICENSE). Die Modelle gehören nicht zum
-Repository: Das Vogelarten-Modell lädt `setup_models.sh` von Google Coral, das
-YOLO-Modell kommt über die Synaptics-Beispiele. Für sie gelten die Lizenzen der
-jeweiligen Quelle. Die Screenshots in `docs/` enthalten Fotos von Wikimedia
-Commons unter CC BY / CC BY-SA (Urheber siehe „Die Webseite“).
+The code is licensed under the [MIT License](LICENSE). The models are not part of
+the repository: `setup_models.sh` downloads the species model from Google Coral,
+and the YOLO model comes with the Synaptics examples. Their own licenses apply.
+The screenshots in `docs/` contain photos from Wikimedia Commons under CC BY /
+CC BY-SA (credits under "The web page").
