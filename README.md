@@ -1,10 +1,10 @@
 # Vogelwacht – Software für das Vogelhaus (Version 0.1)
 
-Erkennt Vögel auf der Sitzstange, bestimmt die Art und zeigt die Besuche auf
+Erkennt Vögel am Rand der Futterschale, bestimmt die Art und zeigt die Besuche auf
 einer kleinen Webseite – komplett auf dem Coralboard SL, ohne Cloud.
 
 *English: On-device bird species recognition for the Synaptics Coral Board SL.
-A camera watches the perch of a 3D-printed bird feeder, the board detects birds
+A camera watches the feeding tray of a 3D-printed bird feeder, the board detects birds
 on its NPU, identifies the species and logs each visit with a photo on a small
 local web page. No cloud. Documentation below is in German.*
 
