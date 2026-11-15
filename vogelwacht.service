@@ -1,0 +1,13 @@
+[Unit]
+Description=Vogelwacht - KI-Vogelerkennung
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+WorkingDirectory=/home/root/vogelwacht
+ExecStart=/home/root/sl2610-examples/.venv/bin/python /home/root/vogelwacht/vogelwacht.py
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

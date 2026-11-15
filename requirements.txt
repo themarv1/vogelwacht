@@ -1,0 +1,3 @@
+# Zusaetzlich zu den Paketen aus sl2610-examples (numpy, opencv, torq-runtime ...)
+ai-edge-litert
+flask

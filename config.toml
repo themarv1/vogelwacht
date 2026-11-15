@@ -1,0 +1,64 @@
+# Vogelwacht – Einstellungen
+# Relative Pfade beziehen sich auf den Ordner dieser Datei.
+
+[camera]
+device = "/dev/video0"          # Kamera (v4l2-ctl --list-devices)
+width = 640
+height = 480                    # Vogel fuellt bei ca. 20 cm Abstand gut das halbe Bild
+fps = 15
+rotate = 0                      # 0, 90, 180, 270 (im Uhrzeigersinn)
+# Optional: V4L2-Steuergeraet des Sensors (Synaptics-Beispiel nutzt /dev/v4l-subdev2)
+# und Belichtungswerte. Leer lassen = Kameravorgaben.
+control_device = ""
+controls = {}                   # z. B. { exposure_auto = 1 }
+retune_exposure_min = 10        # Belichtung der CSI-Kamera alle x Minuten nachstellen (0 = aus)
+
+[detector]
+# Pfad zum geklonten Synaptics-Repository sl2610-examples
+examples_dir = "/home/root/sl2610-examples"
+model = "/home/root/sl2610-examples/models/Synaptics/yolov8-od-nano-320-int8-torq/yolo_od.vmfb"
+labels = "/home/root/sl2610-examples/object_detection/labels.json"
+min_score = 0.35                # Mindestsicherheit "Vogel" (0..1)
+
+[classifier]
+model = "models/mobilenet_v2_1.0_224_inat_bird_quant.tflite"
+labels = "models/inat_bird_labels.txt"
+# Nur die Arten aus species_de.py zulassen (Gartenvoegel in Deutschland).
+# Erhoeht die Trefferquote deutlich; false = alle 964 Arten des Modells.
+restrict_to_garden_birds = true
+crop_margin = 0.2               # Rand um den erkannten Vogel (Anteil der Boxgroesse)
+interval_s = 0.5                # hoechstens alle x Sekunden klassifizieren
+threads = 2
+
+[visits]
+gap_s = 30                      # so lange ohne Vogel = Besuch zu Ende
+min_frames = 2                  # weniger Bilder = Fehlerkennung, verwerfen
+min_confidence = 0.5            # darunter wird der Besuch als "unbekannt" gespeichert
+
+[motion]
+# Die KI laeuft nur, wenn sich im Bild etwas bewegt (spart Strom und Waerme).
+enabled = true
+threshold = 25                  # Helligkeitsaenderung je Pixel (0..255)
+min_area = 0.01                 # Anteil geaenderter Pixel, ab dem "Bewegung" gilt
+idle_fps = 3                    # Bildrate im Ruhezustand
+active_s = 5                    # so lange nach der letzten Bewegung weiter erkennen
+
+[schedule]
+active_from = 6                 # Uhrzeit (Stunde), ab der erkannt wird
+active_until = 20               # bis zu dieser Stunde; nachts Pause
+
+[storage]
+data_dir = "data"
+keep_images_days = 30
+
+[web]
+enabled = true
+host = "0.0.0.0"
+port = 8080
+live_interval_s = 2             # Livebild auf der Webseite aktualisieren
+
+[notify]
+# Optional: Besuch per HTTP-POST (JSON) melden, z. B. an einen Home-Assistant-
+# Webhook oder ntfy. Leer = aus. only_species = nur bei diesen Arten melden.
+webhook_url = ""
+only_species = []               # z. B. ["Dendrocopos major", "Pyrrhula pyrrhula"]

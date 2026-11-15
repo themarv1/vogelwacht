@@ -1,0 +1,8 @@
+# Modelle werden von setup_models.sh geladen
+models/
+# Laufzeitdaten (Datenbank, Fotos)
+data/
+__pycache__/
+*.pyc
+.venv/
+*_ergebnis.jpg

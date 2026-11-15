@@ -1,0 +1,48 @@
+"""Deutsche Namen fuer haeufige Garten- und Futterhausvoegel.
+
+Schluessel: lateinischer Name, wie er in der Labeldatei des Artmodells
+(iNaturalist-Vogelmodell von Google Coral) steht. Arten, die hier fehlen,
+werden mit dem englischen Namen aus der Labeldatei angezeigt.
+"""
+
+GERMAN_NAMES = {
+    'Parus major': 'Kohlmeise',
+    'Cyanistes caeruleus': 'Blaumeise',
+    'Periparus ater': 'Tannenmeise',
+    'Lophophanes cristatus': 'Haubenmeise',
+    'Poecile montanus': 'Weidenmeise',
+    'Aegithalos caudatus': 'Schwanzmeise',
+    'Erithacus rubecula': 'Rotkehlchen',
+    'Turdus merula': 'Amsel',
+    'Turdus philomelos': 'Singdrossel',
+    'Turdus pilaris': 'Wacholderdrossel',
+    'Passer domesticus': 'Haussperling',
+    'Passer montanus': 'Feldsperling',
+    'Fringilla coelebs': 'Buchfink',
+    'Fringilla montifringilla': 'Bergfink',
+    'Chloris chloris': 'Grünfink',
+    'Carduelis carduelis': 'Stieglitz',
+    'Spinus spinus': 'Erlenzeisig',
+    'Pyrrhula pyrrhula': 'Gimpel',
+    'Coccothraustes coccothraustes': 'Kernbeißer',
+    'Emberiza citrinella': 'Goldammer',
+    'Sitta europaea': 'Kleiber',
+    'Certhia brachydactyla': 'Gartenbaumläufer',
+    'Troglodytes troglodytes': 'Zaunkönig',
+    'Prunella modularis': 'Heckenbraunelle',
+    'Phoenicurus ochruros': 'Hausrotschwanz',
+    'Phoenicurus phoenicurus': 'Gartenrotschwanz',
+    'Sturnus vulgaris': 'Star',
+    'Dendrocopos major': 'Buntspecht',
+    'Dryobates minor': 'Kleinspecht',
+    'Picus viridis': 'Grünspecht',
+    'Garrulus glandarius': 'Eichelhäher',
+    'Pica pica': 'Elster',
+    'Corvus monedula': 'Dohle',
+    'Corvus corone': 'Rabenkrähe',
+    'Columba palumbus': 'Ringeltaube',
+    'Streptopelia decaocto': 'Türkentaube',
+    'Sylvia atricapilla': 'Mönchsgrasmücke',
+    'Motacilla alba': 'Bachstelze',
+    'Regulus regulus': 'Wintergoldhähnchen',
+}
