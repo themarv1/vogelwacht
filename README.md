@@ -16,6 +16,25 @@ Printables: **[Vogelwacht – AI Bird Feeder Case for the Coral Board SL](PRINTA
 > noch nicht da). Getestet sind die Artbestimmung mit dem echten Modell,
 > Besuchslogik, Datenbank und Webseite am PC – siehe „Was getestet ist“.
 
+## Die Webseite
+
+Tagesstatistik je Art, Besuche nach Uhrzeit, die letzten Besucher mit Foto und
+das Livebild. Die Seite passt sich dem hellen bzw. dunklen Modus des Geräts an.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/webseite_dunkel.jpg">
+  <img src="docs/webseite_hell.jpg" alt="Vogelwacht-Webseite mit Tagesstatistik, letzten Besuchern und Livebild" width="600">
+</picture>
+
+<sub>Screenshot vom Test am PC mit Beispieldaten, nicht vom Board. Vogelfotos von
+Wikimedia Commons: Kohlmeise – [Luc Viatour](https://commons.wikimedia.org/wiki/File:Parus_major_Luc_Viatour.jpg) (CC BY-SA 2.0),
+Blaumeise – [Francis Franklin](https://commons.wikimedia.org/wiki/File:Eurasian_blue_tit_Lancashire.jpg) (CC BY-SA 3.0),
+Rotkehlchen – [Jacob Spinks](https://commons.wikimedia.org/wiki/File:Robin_(9509442456).jpg) (CC BY 2.0),
+Amsel – [Andreas Trepte](https://commons.wikimedia.org/wiki/File:Common_Blackbird.jpg) (CC BY-SA 2.5),
+Haussperling – [Rhododendrites](https://commons.wikimedia.org/wiki/File:House_sparrow_male_in_Prospect_Park_(53532).jpg) (CC BY-SA 4.0),
+Buchfink – [MichaelMaggs](https://commons.wikimedia.org/wiki/File:Fringilla_coelebs_(chaffinch),_male.jpg) (CC BY-SA 2.5).
+Die Screenshots fallen deshalb nicht unter die MIT-Lizenz des Codes.</sub>
+
 ## Ablauf
 
 ```
@@ -172,4 +191,5 @@ wie in `models/inat_bird_labels.txt`).
 Der Code steht unter der [MIT-Lizenz](LICENSE). Die Modelle gehören nicht zum
 Repository: Das Vogelarten-Modell lädt `setup_models.sh` von Google Coral, das
 YOLO-Modell kommt über die Synaptics-Beispiele. Für sie gelten die Lizenzen der
-jeweiligen Quelle.
+jeweiligen Quelle. Die Screenshots in `docs/` enthalten Fotos von Wikimedia
+Commons unter CC BY / CC BY-SA (Urheber siehe „Die Webseite“).
